@@ -2,16 +2,22 @@ import React, { useState } from 'react'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col'
-import useFetch from '../../hooks/useFetch';
+import { useAuth } from '../../hooks/useAuth';
 
 export function Login() {
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const { data, loading, error } = useFetch('https://api.quotable.io/random', 'get', {});
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
     
     const handleLogin = () => {
-        console.log(data)
+      login({
+        id: '1',
+        name: 'John Doe',
+        email: 'john.doe@email.com',
+      });
+
+      console.log('User login successful');
     }
 
   return (
