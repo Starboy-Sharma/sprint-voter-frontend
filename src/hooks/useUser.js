@@ -7,7 +7,6 @@ export const useUser = () => {
     const { setItem } = useLocalStorage();
 
     const addUser = (user) => {
-        console.log(user);
         setUser(user);
         setItem('user', JSON.stringify(user));
     };

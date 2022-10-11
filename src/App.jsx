@@ -9,11 +9,11 @@ import './assets/css/App.css'
 
 function App() {
 
-  const { user, login, logout } = useAuth();
+  const { user, login: setUser, logout } = useAuth();
 
   return (
 
-    <AuthContext.Provider value={{ user, login }}>
+    <AuthContext.Provider value={{ user, setUser }}>
       <div className="App">
         <Routes>
           <Route path='/' element={<Home />} />
