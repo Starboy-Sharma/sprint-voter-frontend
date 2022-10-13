@@ -9,7 +9,7 @@ export const useAuth = () => {
 
     useEffect(() => {
         // if user is already logged in, then add the user to the app.
-        const user = getItem('user');
+        const user = JSON.parse(getItem('user'));
         if (user) {
             addUser(user);
         }

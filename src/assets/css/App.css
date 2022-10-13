@@ -34,12 +34,16 @@ body {
 
 .login-card {
     background-color: #f6f5f7;
-    height: 400px;
+    height: 500px;
     color: var(--dark-color);
     border-radius: 5px;
     padding: 1rem;
     font-family: 'Montserrat', 'sans-serif';
     padding: 4rem !important;
+}
+
+.signup-card {
+    height: 600px;
 }
 
 .login-card h2 {
