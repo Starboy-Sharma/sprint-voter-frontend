@@ -33,7 +33,7 @@ export function Login() {
             <select className="form-select" aria-label="Choose login Type">
               <option defaultValue=''>Login Type</option>
               <option value="member">Member Login</option>
-              <option value="2">Manager Login</option>
+              <option value="team_member">Manager Login</option>
             </select>
 
             <button className="signin-btn mt-4" onClick={handleLogin}> Sign In </button>

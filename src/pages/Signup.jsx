@@ -30,7 +30,11 @@ export function Signup() {
                 <input type="password"  placeholder="Your Secret" ref={passwordRef} />
                 <input type="text"  placeholder="Your Team Name" ref={teamNameRef} />
                 <input type="text"  placeholder="Company Name" ref={orgNameRef} />
-                <input type="text"  placeholder="Your Role" ref={roleRef} />
+                <select className="form-select" aria-label="Choose login Type" ref={roleRef}>
+                  <option defaultValue=''>Select Role</option>
+                  <option value="member">Member</option>
+                  <option value="team_member">Team Manager</option>
+                </select>
     
                 <button className="signin-btn mt-4" onClick={handleSignup}> Sign up </button>
     
