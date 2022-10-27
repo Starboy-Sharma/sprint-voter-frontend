@@ -34,7 +34,6 @@ body {
 
 .login-card {
     background-color: #f6f5f7;
-    height: 500px;
     color: var(--dark-color);
     border-radius: 5px;
     padding: 1rem;
