@@ -15,6 +15,30 @@ body {
     height: 100%;
 }
 
+.text-bold-400 {
+    font-weight: 400;
+}
+
+.text-bold-700 {
+    font-weight: 700;
+}
+
+.text-orange {
+    color: rgb(255, 98, 0) !important;
+}
+
+.text-red {
+    color: var(--red-color) !important;
+}
+
+.text-green {
+    color: var(--green-color) !important;
+}
+
+.text-blue {
+    color: var(--blue-color) !important;
+}
+
 .home-container {
     height: 100vh;
 }
