@@ -1,20 +1,21 @@
-import { useLocation, Navigate, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth';
 
 export function RequireAuth() {
+  useAuth();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    useAuth();
-    const {user} = useContext(AuthContext);
-    const location = useLocation();
+  useEffect(() => {
+    if (!user) {
+      console.log('Redirecting to login....');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    }
+  }, [user]);
 
-    useEffect(() => {
-        console.log(user);
-    }, [user]);
-
-    return (
-        user ? <Outlet />
-            : <Navigate to="/login"  state={{ from: location }} replace />
-    )
+  return user && <Outlet />;
 }

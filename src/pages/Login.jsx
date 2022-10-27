@@ -63,7 +63,7 @@ export function Login() {
           accessToken: result.accessToken,
           userId: result.profile.id,
           username: result.profile.username,
-          teams: result.profile.teams,
+          teams: result.teams,
         });
 
         setTimeout(() => {
@@ -71,8 +71,13 @@ export function Login() {
         }, 600);
       })
       .catch((err) => {
-        console.log('Error: ' + err);
-        setError('Server error: Please try again after some time. (:');
+        if (err.response.status === 400 || err.response.status === 500) {
+          // validation error from server
+          setError(err.response.data.message);
+          return;
+        }
+
+        setError('Something went wrong, please try again later');
       });
   };
 
@@ -119,7 +124,7 @@ export function Login() {
               title="Create a Free Account"
             >
               {' '}
-              Click here 🐭{' '}
+              Click here 💨{' '}
             </Link>{' '}
           </p>
         </Col>

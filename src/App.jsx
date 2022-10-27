@@ -5,18 +5,29 @@ import { Signup } from './pages/Signup';
 import { Routes, Route } from 'react-router-dom';
 
 import { AuthContext } from './context/AuthContext';
+import { useUser } from './hooks/useUser';
 
 import './assets/css/App.css';
 import { RequireAuth } from './pages/RequireAuth';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+function sessionExists() {
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  if (user) {
+    return user;
+  }
+
+  return null;
+}
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(sessionExists());
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      <div className="App">
+    <div className="App">
+      <AuthContext.Provider value={{ user, setUser }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -26,8 +37,8 @@ function App() {
             <Route path="/teams" element={<Teams />} />
           </Route>
         </Routes>
-      </div>
-    </AuthContext.Provider>
+      </AuthContext.Provider>
+    </div>
   );
 }
 
