@@ -38,4 +38,18 @@ In the root of the repository folder open terminal and run ``npm install``
 - Socket.io 
 - Redux 
 - React Query 
-- MUI https://mui.com/  
+
+
+## Team Invite link
+- The link should be something like http://localhost:3000/join/{teamId}
+  - When user click on the link clear user session.
+  - Ask User Email
+  - If user is already exists then move the user to the login page.
+  - If user not exists then Register the user and move the user to the login page.
+
+
+## Member Login
+- A member can see the number of teams he/she is parts of.
+- On click on start planning
+
+

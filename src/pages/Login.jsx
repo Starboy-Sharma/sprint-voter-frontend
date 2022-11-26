@@ -11,7 +11,6 @@ export function Login() {
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -30,11 +29,6 @@ export function Login() {
       return;
     }
 
-    if (!role) {
-      setError('Please select a role.');
-      return;
-    }
-
     if (!password || password.length < 8) {
       setError('Password must be at least 8 characters.');
       return;
@@ -49,7 +43,6 @@ export function Login() {
       .post(loginURL, {
         email,
         password,
-        role,
       })
       .then((response) => {
         let result = response.data.result;
@@ -63,6 +56,8 @@ export function Login() {
           accessToken: result.accessToken,
           userId: result.profile.id,
           username: result.profile.username,
+          name: result.profile.name,
+          role: result.profile.role,
           teams: result.teams,
         });
 
@@ -99,16 +94,6 @@ export function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-
-          <select
-            className="form-select mt-3"
-            aria-label="Choose login Type"
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option defaultValue="">Select Role</option>
-            <option value="team-member">Team Member </option>
-            <option value="team-manager">Team Manager</option>
-          </select>
 
           <button className="signin-btn mt-4" onClick={handleLogin}>
             {' '}
