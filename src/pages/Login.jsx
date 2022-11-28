@@ -109,7 +109,7 @@ export function Login() {
               title="Create a Free Account"
             >
               {' '}
-              Click here 💨{' '}
+              Click here{' '}
             </Link>{' '}
           </p>
         </Col>

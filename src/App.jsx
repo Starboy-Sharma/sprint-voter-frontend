@@ -2,6 +2,7 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Teams } from './pages/Teams';
 import { Signup } from './pages/Signup';
+import { Chats } from './pages/Chats';
 import { Routes, Route } from 'react-router-dom';
 
 import { AuthContext } from './context/AuthContext';
@@ -35,6 +36,7 @@ function App() {
 
           <Route element={<RequireAuth />}>
             <Route path="/teams" element={<Teams />} />
+            <Route path="/planning" element={<Chats />} />
           </Route>
         </Routes>
       </AuthContext.Provider>

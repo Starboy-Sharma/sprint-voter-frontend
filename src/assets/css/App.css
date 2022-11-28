@@ -121,3 +121,7 @@ body {
 .my-float {
     margin-top: 22px;
 }
+
+.bg-light {
+    background-color: antiquewhite;
+}
