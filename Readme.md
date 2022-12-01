@@ -54,8 +54,8 @@ In the root of the repository folder open terminal and run ``npm install``
 
 
 ## TODO
-[ ] Teams page load user teams data with their member name from the database.
-[ ] On Click of Start planning redirect user to Chat Component.
+[☑️] Teams page load user teams data with their member name from the database.
+[☑️] On Click of Start planning redirect user to Chat Component.
 [ ] Create a room on the base of the team Id.
-[ ] Create Chat Component.
+[⚒️] Create Chat Component.
 [ ] Create Choose Card Component.
