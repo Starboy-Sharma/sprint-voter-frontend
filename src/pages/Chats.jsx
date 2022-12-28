@@ -6,14 +6,29 @@ import axios from 'axios';
 import ChatSidebar from './ChatSidebar';
 import io from 'socket.io-client';
 
-function getUserTeam(location, navigate) {
+function getUserData(location, navigate) {
+
+  console.log(location.state);
+
   const teamData = location.state?.team;
   if (!teamData || Object.keys(teamData).length == 0) {
     console.log('Redirecting to... teams page');
     navigate('/teams');
   }
 
-  return teamData;
+  const userData = location.state?.user;
+  if (!teamData || Object.keys(teamData).length == 0) {
+    console.log('Redirecting to... teams page');
+    navigate('/teams');
+  }
+
+  const sprintData = location.state?.sprintData;
+  if (!sprintData || Object.keys(sprintData).length == 0) {
+    console.log('Redirecting to... teams page');
+    navigate('/teams');
+  }
+
+  return { team: teamData, user: userData, sprintData: sprintData };
 }
 
 export function Chats() {
@@ -21,7 +36,7 @@ export function Chats() {
   const navigate = useNavigate();
   const [manager, setManager] = useState(null);
 
-  const team = getUserTeam(location, navigate);
+  const { team, user, sprintData } = getUserData(location, navigate);
 
   const connect = () => {
     const socket = io(SOCKET_URL);
@@ -32,8 +47,10 @@ export function Chats() {
 
     socket.emit('joinRoom', {
       room: team['teamName'],
-      username: 'Pankaj',
-      userId: team['userId'],
+      username: user.username,
+      name: user.name,
+      role: user.role,
+      userId: user.id,
     });
 
     socket.on('userStatus', function (user) {
@@ -67,6 +84,7 @@ export function Chats() {
         teamName={team.teamName}
         companyName={team.companyName}
         manager={manager}
+        sprintData={sprintData}
       ></ChatHeader>
 
       <div className="chat-container">

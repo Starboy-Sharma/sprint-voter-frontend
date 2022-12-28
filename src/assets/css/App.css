@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800');
 
 :root {
     --dark-color: #161925;
@@ -13,6 +13,7 @@ body {
     color: var(--light-color) !important;
     width: 100%;
     height: 100%;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .text-bold-400 {
@@ -20,7 +21,7 @@ body {
 }
 
 .text-bold-700 {
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .text-orange {
@@ -128,9 +129,9 @@ body {
 
 /* Chat Component */
 .chat-header {
-    width: 100vw;
-    background-color: var(--light-color);
-    color: var(--dark-color);
+    width: 100%;
+    color: whitesmoke;
+    background-color: #1f1f1f;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -138,8 +139,10 @@ body {
 }
 
 .chat-header h1 {
-    font-size: 20px;
+    font-size: 28px;
     align-self: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
 }
 
 .chat-header h1 > p {
@@ -173,6 +176,7 @@ body {
     border-bottom: 1px solid #ccc;
     padding: 10px 0;
     margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .chat-sidebar .members {
@@ -193,4 +197,10 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+}
+
+.form-modal {
+    color: var(--dark-color);
 }

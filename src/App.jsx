@@ -6,7 +6,6 @@ import { Chats } from './pages/Chats';
 import { Routes, Route } from 'react-router-dom';
 
 import { AuthContext } from './context/AuthContext';
-import { useUser } from './hooks/useUser';
 
 import './assets/css/App.css';
 import { RequireAuth } from './pages/RequireAuth';
