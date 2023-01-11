@@ -160,7 +160,7 @@ body {
 .chat-sidebar {
     border: 1.5px solid #ccc;
     width: 25%;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 100px);
     display: inline-block;
     background-color: var(--light-color);
     color: var(--dark-color);
@@ -203,4 +203,63 @@ body {
 
 .form-modal {
     color: var(--dark-color);
+}
+
+.chat-container {
+    display: flex;
+}
+
+.chat-container main {
+    padding-left: 10px;
+    flex: 1;
+    height: fit-content;
+    padding-top: 10px;
+    border-top: 1px solid #EAE0CC;
+    color: whitesmoke;
+    padding: 10px;
+}
+
+.chat-container .chat-message {
+    background-color: #1f1f1f;
+    padding: 1rem;
+}
+
+.chat-container .chat-message {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid wheat;
+    border-radius: 0.3rem;
+}
+
+.chat-message button {
+    margin-right: 10px;
+}
+
+/* Vote Cards */
+.vote-cards {
+    padding: 10px;
+    margin-top: 10%;
+    display: flex;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.vote-cards .vote-card {
+    width: 100px;
+    height: 120px;
+    background-color: #ffca2c;
+    color: #161925;
+    font-size: 20px;
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.vote-card:hover {
+    box-shadow: 1px 1px 5px #fff;
 }

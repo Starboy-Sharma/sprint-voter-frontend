@@ -5,9 +5,10 @@ import { BASE_URL, SOCKET_URL } from '../config.js';
 import axios from 'axios';
 import ChatSidebar from './ChatSidebar';
 import io from 'socket.io-client';
+import ChatMessage from './ChatMessage';
+import VoteCard from './VoteCard';
 
 function getUserData(location, navigate) {
-
   console.log(location.state);
 
   const teamData = location.state?.team;
@@ -38,8 +39,8 @@ export function Chats() {
 
   const { team, user, sprintData } = getUserData(location, navigate);
 
-  const connect = () => {
-    const socket = io(SOCKET_URL);
+  const connect = function () {
+    window.socket = io(SOCKET_URL);
 
     socket.on('connect', () => {
       console.log('You are connected... 🧑‍🚀');
@@ -50,7 +51,7 @@ export function Chats() {
       username: user.username,
       name: user.name,
       role: user.role,
-      userId: user.id,
+      userId: user.userId,
     });
 
     socket.on('userStatus', function (user) {
@@ -78,6 +79,21 @@ export function Chats() {
     connect();
   }, []);
 
+  const handleVote = function (vote) {
+    console.log('Vote received', vote, user);
+
+    const voteData = {
+      room: team['teamName'],
+      username: user.username,
+      name: user.name,
+      role: user.role,
+      userId: user.userId,
+      vote: vote,
+    };
+
+    socket.emit('addVote', voteData);
+  };
+
   return (
     <>
       <ChatHeader
@@ -89,6 +105,22 @@ export function Chats() {
 
       <div className="chat-container">
         <ChatSidebar></ChatSidebar>
+
+        <main>
+          <ChatMessage
+            title="#3657: Support files in pulse"
+            description="Implement support files in VFX/DI Pulls pages"
+          ></ChatMessage>
+
+          <div className="vote-cards">
+            <VoteCard value={1} handleVote={handleVote} />
+            <VoteCard value={2} handleVote={handleVote} />
+            <VoteCard value={3} handleVote={handleVote} />
+            <VoteCard value={5} handleVote={handleVote} />
+            <VoteCard value={8} handleVote={handleVote} />
+            <VoteCard value="No Idea" handleVote={handleVote} />
+          </div>
+        </main>
       </div>
     </>
   );

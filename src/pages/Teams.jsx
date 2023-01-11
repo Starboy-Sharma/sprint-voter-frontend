@@ -11,7 +11,8 @@ export function Teams() {
     accessToken: user.accessToken,
     role: user.role,
     username: user.username,
-  }
+    userId: user.userId,
+  };
 
   return (
     <Container fluid="md">
@@ -22,7 +23,7 @@ export function Teams() {
         <h1 className="my-5 text-capitalize"> Howdy! 👋 {user?.name} </h1>
         <Col xs={12} className="d-flex justify-content-around">
           {user.teams.map((team) => (
-            <TeamCard key={team.teamName} team={team} user={userData}  />
+            <TeamCard key={team.teamName} team={team} user={userData} />
           ))}
         </Col>
       </Row>
