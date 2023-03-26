@@ -205,6 +205,12 @@ body {
     color: var(--dark-color);
 }
 
+.add-member-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+
 .chat-container {
     display: flex;
 }

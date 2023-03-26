@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BsBuilding } from 'react-icons/bs';
+import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import Modal from 'react-bootstrap/Modal';
@@ -133,6 +134,12 @@ const TeamCard = ({ team, user }) => {
         alt="Team Image"
       />
       <div className="card-body bg-light">
+        <AiOutlineUsergroupAdd
+          fontSize={18}
+          className="add-member-icon"
+          role="button"
+          title="Add Member"
+        />
         <h5 className="card-title">{team.teamName}</h5>
         <p className="card-text text-bold-700">
           {' '}
