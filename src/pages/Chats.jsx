@@ -54,9 +54,17 @@ export function Chats() {
       userId: user.userId,
     });
 
-    socket.on('userStatus', function (user) {
+    socket.on('userStatus', function (data) {
+      console.log(typeof data);
+      if (user.userId == data.userId) {
+        console.warn(
+          'You have logged in from a different instance.... Please logout now.'
+        );
+        return false;
+      }
+
       console.log('User status received: 🧑‍🚀');
-      console.table(user);
+      console.table(data);
     });
   };
 
@@ -104,7 +112,7 @@ export function Chats() {
       ></ChatHeader>
 
       <div className="chat-container">
-        <ChatSidebar></ChatSidebar>
+        <ChatSidebar members={team.members}></ChatSidebar>
 
         <main>
           <ChatMessage

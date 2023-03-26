@@ -13,13 +13,14 @@ function FormModal({
   handleModalSubmit,
   setSprintDateRange,
   sprintRange,
+  toggleModal
 }) {
   const todayDate = new Date();
 
   return (
     <Modal
       show={isOpen}
-      onHide={() => toggleModal(close)}
+      onHide={() => toggleModal(false)}
       className="form-modal"
     >
       <Form onSubmit={handleModalSubmit}>
@@ -126,6 +127,7 @@ const TeamCard = ({ team, user }) => {
         handleModalSubmit={handleModalSubmit}
         setSprintDateRange={setSprintDateRange}
         sprintRange={sprintRange}
+        toggleModal={toggleModal}
       />
       <img
         className="card-img-top img-responsive img-thumbnail"
@@ -150,6 +152,10 @@ const TeamCard = ({ team, user }) => {
         >
           START PLANNING
         </Link>
+
+        <button className="btn btn-secondary mt-2 w-100 btn-sm d-flex justify-content-center">
+          ADD MEMBERS
+        </button>
       </div>
     </div>
   );
