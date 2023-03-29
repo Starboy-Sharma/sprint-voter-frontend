@@ -7,6 +7,8 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import CustomModal from './CustomModal';
+import AddMember from './AddMember';
 
 // Sprint planning form modal
 function FormModal({
@@ -14,7 +16,7 @@ function FormModal({
   handleModalSubmit,
   setSprintDateRange,
   sprintRange,
-  toggleModal
+  toggleModal,
 }) {
   const todayDate = new Date();
 
@@ -62,8 +64,10 @@ function FormModal({
 const TeamCard = ({ team, user }) => {
   const memberNames = getMembers();
   const [isOpen, toggleModal] = useState(false);
+  const [isAddMemberModal, setAddMemberModal] = useState(false);
   const [sprintData, setSprintData] = useState([]);
   const [sprintRange, setSprintDateRange] = useState([new Date(), new Date()]);
+  const [teamId, setTeamId] = useState('')
 
   const navigate = useNavigate();
 
@@ -80,6 +84,10 @@ const TeamCard = ({ team, user }) => {
         sprintData: [event.target.title.value, sprintRange],
       },
     });
+  };
+
+  const handleAddMembersModalSubmit = (event) => {
+    console.log('handleAddMembersModalSubmit called');
   };
 
   function getMembers() {
@@ -130,18 +138,23 @@ const TeamCard = ({ team, user }) => {
         sprintRange={sprintRange}
         toggleModal={toggleModal}
       />
+
+      <CustomModal
+        isOpen={isAddMemberModal}
+        title="Add Members"
+        toggleModal={setAddMemberModal}
+        saveBtnText="Save"
+        onSubmit={handleAddMembersModalSubmit}
+      >
+        <AddMember teamId={teamId} isOpen={isAddMemberModal} />
+      </CustomModal>
+
       <img
         className="card-img-top img-responsive img-thumbnail"
         src="https://images2.alphacoders.com/531/531602.jpg"
         alt="Team Image"
       />
       <div className="card-body bg-light">
-        <AiOutlineUsergroupAdd
-          fontSize={18}
-          className="add-member-icon"
-          role="button"
-          title="Add Member"
-        />
         <h5 className="card-title">{team.teamName}</h5>
         <p className="card-text text-bold-700">
           {' '}
@@ -160,7 +173,17 @@ const TeamCard = ({ team, user }) => {
           START PLANNING
         </Link>
 
-        <button className="btn btn-secondary mt-2 w-100 btn-sm d-flex justify-content-center">
+        <button
+          className="btn btn-secondary mt-2 w-100 btn-sm d-flex justify-content-center"
+          onClick={() => {
+            setAddMemberModal(true);
+            setTeamId(team['_id']);
+          }}
+        >
+          <AiOutlineUsergroupAdd
+            fontSize={18}
+            style={{ marginRight: '0.5rem' }}
+          />
           ADD MEMBERS
         </button>
       </div>
