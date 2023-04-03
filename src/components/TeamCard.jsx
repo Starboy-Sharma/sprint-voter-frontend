@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { BsBuilding } from 'react-icons/bs';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -67,7 +67,7 @@ const TeamCard = ({ team, user }) => {
   const [isAddMemberModal, setAddMemberModal] = useState(false);
   const [sprintData, setSprintData] = useState([]);
   const [sprintRange, setSprintDateRange] = useState([new Date(), new Date()]);
-  const [teamId, setTeamId] = useState('')
+  const [selectedUserIds, setSelectedUserIds] = useState([]);
 
   const navigate = useNavigate();
 
@@ -88,6 +88,9 @@ const TeamCard = ({ team, user }) => {
 
   const handleAddMembersModalSubmit = (event) => {
     console.log('handleAddMembersModalSubmit called');
+    event.preventDefault();
+
+    console.log(selectedUserIds);
   };
 
   function getMembers() {
@@ -146,7 +149,11 @@ const TeamCard = ({ team, user }) => {
         saveBtnText="Save"
         onSubmit={handleAddMembersModalSubmit}
       >
-        <AddMember teamId={teamId} isOpen={isAddMemberModal} />
+        <AddMember
+          teamId={team['_id']}
+          isOpen={isAddMemberModal}
+          setSelectedUserIds={setSelectedUserIds}
+        />
       </CustomModal>
 
       <img
@@ -177,7 +184,6 @@ const TeamCard = ({ team, user }) => {
           className="btn btn-secondary mt-2 w-100 btn-sm d-flex justify-content-center"
           onClick={() => {
             setAddMemberModal(true);
-            setTeamId(team['_id']);
           }}
         >
           <AiOutlineUsergroupAdd

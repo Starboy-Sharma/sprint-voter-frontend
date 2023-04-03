@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { BASE_URL } from '../config';
 import { useUser } from '../hooks/useUser';
 import axios from 'axios';
 import { ListGroup, Placeholder, Badge } from 'react-bootstrap';
+
+// TODO - Add dynamic search with updated pagination
+
+const userIds = [];
 
 const Spinner = function () {
   return (
@@ -20,7 +24,7 @@ const Spinner = function () {
   );
 };
 
-function AddMember({ teamId, isOpen }) {
+function AddMember({ teamId, isOpen, setSelectedUserIds }) {
   if (isOpen === false) return;
 
   /**
@@ -30,21 +34,69 @@ function AddMember({ teamId, isOpen }) {
   const userSchema = {
     users: [],
     error: '',
+    count: 0,
     isLoading: false,
+    isFooterLoader: false,
   };
 
   const { user } = useUser();
   const API_URL = BASE_URL + '/member';
-  const [members, setMembers] = useState(userSchema);
+  const LIMIT = 10;
 
-  useEffect(() => {
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source();
+  const [members, setMembers] = useState(userSchema);
+  const [page, setPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const listRef = useRef(null);
+
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+
+    console.log(hasMoreData);
+    // Check if user has scrolled to the end of the list
+    if (scrollTop + clientHeight === scrollHeight && hasMoreData === true) {
+      console.log('Scroll to end of list:: Load more data from API server');
+      setPage((prevState) => prevState + 1);
+    }
+  };
+
+  const selectMember = (user) => {
+    user.isSelected = !user.isSelected;
+    // update selected members
+    if (user.isSelected === true) {
+      userIds.push(user.id);
+    } else {
+      const index = userIds.indexOf(user.id);
+
+      if (index !== -1) {
+        userIds.splice(index, 1);
+      }
+    }
+
+    setSelectedUserIds([...userIds]);
 
     setMembers((prevState) => {
       return {
         ...prevState,
-        isLoading: true,
+        users: prevState.users,
+      };
+    });
+  };
+
+  useEffect(() => {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    let loadingKey = '';
+
+    if (page == 1) {
+      loadingKey = 'isLoading';
+    } else {
+      loadingKey = 'isFooterLoader';
+    }
+
+    setMembers((prevState) => {
+      return {
+        ...prevState,
+        [loadingKey]: true,
         error: '',
       };
     });
@@ -54,8 +106,8 @@ function AddMember({ teamId, isOpen }) {
         params: {
           teamId: teamId,
           isMember: false,
-          page: 1,
-          pageCount: 10,
+          page: page,
+          pageCount: LIMIT,
         },
 
         headers: {
@@ -66,10 +118,20 @@ function AddMember({ teamId, isOpen }) {
       })
       .then((response) => {
         if (response.status === 200) {
+          response.data.result?.data?.rows.forEach((user) => {
+            user.isSelected = false;
+          });
+
+          // stop lazy loading if we have reached the end of the response
           setMembers((prevState) => {
+            setHasMoreData(
+              response.data.result?.data?.count >=
+                prevState.users.length + response.data.result?.data?.rows.length
+            );
             return {
               ...prevState,
-              users: response.data.result?.data?.rows,
+              users: [...prevState.users, ...response.data.result?.data?.rows],
+              count: response.data.result?.data?.count,
             };
           });
         }
@@ -78,6 +140,7 @@ function AddMember({ teamId, isOpen }) {
           return {
             ...prevState,
             isLoading: false,
+            isFooterLoader: false,
             error: '',
           };
         });
@@ -91,6 +154,7 @@ function AddMember({ teamId, isOpen }) {
             return {
               ...prevState,
               isLoading: false,
+              isFooterLoader: false,
               error: 'Server is not responding. Please try again',
             };
           });
@@ -101,7 +165,7 @@ function AddMember({ teamId, isOpen }) {
       // cancel the subscription
       source.cancel();
     };
-  }, [teamId]);
+  }, [page]);
 
   return (
     <>
@@ -113,12 +177,21 @@ function AddMember({ teamId, isOpen }) {
       {members.isLoading === true ? (
         <Spinner />
       ) : (
-        <ListGroup as="ol" numbered className="member-container mt-3">
+        <ListGroup
+          as="ol"
+          numbered
+          className="member-container mt-3"
+          ref={listRef}
+          onScroll={handleScroll}
+        >
           {members.users.map((member) => (
             <ListGroup.Item
               as="li"
-              className="d-flex justify-content-between align-items-start"
+              className={`d-flex justify-content-between align-items-start ${
+                member.isSelected ? 'active' : ''
+              }`}
               key={member.id}
+              onClick={() => selectMember(member)}
             >
               <div className="ms-2 me-auto">
                 <div className="fw-bold">{member.name}</div>
@@ -132,6 +205,11 @@ function AddMember({ teamId, isOpen }) {
               </Badge>
             </ListGroup.Item>
           ))}
+          {members.isFooterLoader && (
+            <Placeholder as={ListGroup.Item} animation="glow" className="mb-2">
+              <Placeholder xs={12} />
+            </Placeholder>
+          )}
         </ListGroup>
       )}
     </>
