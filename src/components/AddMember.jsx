@@ -4,25 +4,9 @@ import { useUser } from '../hooks/useUser';
 import axios from 'axios';
 import { ListGroup, Placeholder, Badge } from 'react-bootstrap';
 
-// TODO - Add dynamic search with updated pagination
+import Spinner from './Spinner';
 
-const userIds = [];
-
-const Spinner = function () {
-  return (
-    <ListGroup className="member-container mt-3" title="Please wait...">
-      <Placeholder as={ListGroup.Item} animation="glow" className="mb-2">
-        <Placeholder xs={12} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow" className="mb-2">
-        <Placeholder xs={12} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={12} />
-      </Placeholder>
-    </ListGroup>
-  );
-};
+let startSearch = undefined;
 
 function AddMember({ teamId, isOpen, setSelectedUserIds }) {
   if (isOpen === false) return;
@@ -31,7 +15,7 @@ function AddMember({ teamId, isOpen, setSelectedUserIds }) {
    * Users local state
    */
 
-  const userSchema = {
+  const userModel = {
     users: [],
     error: '',
     count: 0,
@@ -39,19 +23,22 @@ function AddMember({ teamId, isOpen, setSelectedUserIds }) {
     isFooterLoader: false,
   };
 
+  const userIds = [];
+
   const { user } = useUser();
   const API_URL = BASE_URL + '/member';
   const LIMIT = 10;
 
-  const [members, setMembers] = useState(userSchema);
+  const [members, setMembers] = useState(userModel);
   const [page, setPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
+  const [search, setSearch] = useState('');
+  const [isSearch, setIsSearch] = useState(0);
   const listRef = useRef(null);
 
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = listRef.current;
 
-    console.log(hasMoreData);
     // Check if user has scrolled to the end of the list
     if (scrollTop + clientHeight === scrollHeight && hasMoreData === true) {
       console.log('Scroll to end of list:: Load more data from API server');
@@ -82,12 +69,36 @@ function AddMember({ teamId, isOpen, setSelectedUserIds }) {
     });
   };
 
+  const handleSearch = (e) => {
+    let query = e.target.value;
+
+    const searchStr = query
+      .replace(/[^\w\s]/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // reset page
+    setSearch(searchStr);
+    if (startSearch) clearTimeout(startSearch);
+
+    startSearch = setTimeout(() => {
+      console.log(searchStr);
+
+      console.log('We will call API');
+
+      setMembers({ ...userModel });
+      setPage(1);
+      setIsSearch((prevState) => prevState + 1);
+    }, 300);
+  };
+
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     let loadingKey = '';
+    console.log('Chanes are captured');
 
-    if (page == 1) {
+    if (page === 1) {
       loadingKey = 'isLoading';
     } else {
       loadingKey = 'isFooterLoader';
@@ -104,10 +115,11 @@ function AddMember({ teamId, isOpen, setSelectedUserIds }) {
     axios
       .get(API_URL, {
         params: {
-          teamId: teamId,
+          teamId,
           isMember: false,
-          page: page,
+          page,
           pageCount: LIMIT,
+          search,
         },
 
         headers: {
@@ -165,14 +177,17 @@ function AddMember({ teamId, isOpen, setSelectedUserIds }) {
       // cancel the subscription
       source.cancel();
     };
-  }, [page]);
+  }, [page, isSearch]);
 
   return (
     <>
       <input
         type="text"
+        name="Search"
         placeholder="Please type user email or name"
         className="w-100 form-control"
+        value={search}
+        onChange={handleSearch}
       />
       {members.isLoading === true ? (
         <Spinner />
