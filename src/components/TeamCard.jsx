@@ -1,68 +1,15 @@
-import React, { useRef, useState } from 'react';
+import { useState } from 'react';
 import { BsBuilding } from 'react-icons/bs';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import CustomModal from './CustomModal';
 import AddMember from './AddMember';
-
-// Sprint planning form modal
-function FormModal({
-  isOpen,
-  handleModalSubmit,
-  setSprintDateRange,
-  sprintRange,
-  toggleModal,
-}) {
-  const todayDate = new Date();
-
-  return (
-    <Modal
-      show={isOpen}
-      onHide={() => toggleModal(false)}
-      className="form-modal"
-    >
-      <Form onSubmit={handleModalSubmit}>
-        <Modal.Header closeButton>
-          <Modal.Title>Sprint Detail</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Sprint</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Type your title..."
-              required
-              minLength={3}
-              name="title"
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3" controlId="formBasicDateRange">
-            <p>Sprint Start & End Date</p>
-            <DateRangePicker
-              onChange={setSprintDateRange}
-              value={sprintRange}
-              minDate={todayDate}
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="dark" type="submit">
-            Submit
-          </Button>
-        </Modal.Footer>
-      </Form>
-    </Modal>
-  );
-}
+import FormModal from './FormModal';
+import { getMembers } from '../utils/utils';
 
 const TeamCard = ({ team, user }) => {
-  const memberNames = getMembers();
+  const memberNames = getMembers(team);
   const [isOpen, toggleModal] = useState(false);
   const [isAddMemberModal, setAddMemberModal] = useState(false);
   const [sprintData, setSprintData] = useState([]);
@@ -93,26 +40,6 @@ const TeamCard = ({ team, user }) => {
     console.log(selectedUserIds);
   };
 
-  function getMembers() {
-    const members = team.members;
-    const firstFourMember = members.slice(0, 3);
-    let memberNames = [];
-
-    firstFourMember.forEach((member) => {
-      if (member.id !== team.userId) memberNames.push(member.name);
-    });
-    memberNames = memberNames.join(', ');
-
-    if (memberNames.length <= 3) {
-      memberNames = 'You, ' + memberNames;
-    } else {
-      // remove the last member name
-      memberNames.slice(memberNames.length - 1, 1);
-      memberNames = 'You, ' + memberNames;
-    }
-    return memberNames;
-  }
-
   function handleSprintPlanning(e) {
     e.preventDefault();
 
@@ -129,8 +56,6 @@ const TeamCard = ({ team, user }) => {
       },
     });
   }
-
-  getMembers();
 
   return (
     <div className="card text-black" style={{ width: '18rem' }}>
