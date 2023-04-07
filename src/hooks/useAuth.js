@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocalStorage } from './useLocalstorage';
+import { useLocalStorage } from './useLocalStorage';
 import { useUser } from './useUser';
 
 export const useAuth = () => {
