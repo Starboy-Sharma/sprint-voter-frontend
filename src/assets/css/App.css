@@ -263,3 +263,32 @@ body {
 .vote-card:hover {
     box-shadow: 1px 1px 5px #fff;
 }
+
+
+/* ADD MEMBER MODAL */
+
+.member-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.member-container li {
+    cursor: pointer;
+}
+
+.member-container li.active {
+    border: 1px dotted wheat;
+}
+
+.member-container li i{
+    color: var(--dark-color);
+}
+
+.member-container li:hover {
+    transition: ease-out 0.2s;
+    background-color: #5BC0F8;
+}
+
+.member-container .placeholder-glow {
+    margin: 0;
+}
