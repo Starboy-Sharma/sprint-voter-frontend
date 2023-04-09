@@ -96,7 +96,7 @@ function AddMember({ teamId, isOpen, setSelectedUserIds }) {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     let loadingKey = '';
-    console.log('Chanes are captured');
+    console.log('Changes are captured');
 
     if (page === 1) {
       loadingKey = 'isLoading';
