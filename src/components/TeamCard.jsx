@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { BsBuilding } from 'react-icons/bs';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { BASE_URL } from '../config';
 
 import CustomModal from './CustomModal';
 import AddMember from './AddMember';
@@ -36,8 +38,51 @@ const TeamCard = ({ team, user }) => {
   const handleAddMembersModalSubmit = (event) => {
     console.log('handleAddMembersModalSubmit called');
     event.preventDefault();
-
     console.log(selectedUserIds);
+    console.log(team["_id"]);
+
+    if (selectedUserIds.length === 0) {
+      console.info('No users selected');
+      setAddMemberModal(false);
+      return;
+    }
+
+    // Make an API Call and reload the page
+    const API_URL = `${BASE_URL}/member/`
+
+    axios
+      .post(
+        API_URL,
+        {
+          teamId: team['_id'],
+          userIds: selectedUserIds,
+        },
+        {
+          headers: {
+            ['access.token']: JSON.parse(localStorage.getItem('user'))
+              .accessToken,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        const result = response.data.result;
+        console.log(result);
+
+        if (response.status === 200) {
+          alert('Member added successfully!');
+          location.reload();
+        }
+
+        alert('Server error! Please try again later!');
+        console.error(result);
+
+        // hide the modal
+        // setAddMemberModal(false);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
   };
 
   function handleSprintPlanning(e) {
