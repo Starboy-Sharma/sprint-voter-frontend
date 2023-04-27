@@ -2,6 +2,7 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useAuth } from '../hooks/useAuth';
+import { NavBar } from './NavBar';
 
 export function RequireAuth() {
   useAuth();
@@ -17,5 +18,12 @@ export function RequireAuth() {
     }
   }, [user]);
 
-  return user && <Outlet />;
+  return (
+    user && (
+      <>
+        {' '}
+        <NavBar /> <Outlet />{' '}
+      </>
+    )
+  );
 }
