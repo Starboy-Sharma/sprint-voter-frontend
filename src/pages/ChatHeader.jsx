@@ -8,6 +8,7 @@ export default function ChatHeader({
   manager,
   sprintData,
 }) {
+
   const [currentSprint, [startDate, endDate]] = sprintData;
 
   return (

@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChatHeader from './ChatHeader';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BASE_URL, SOCKET_URL } from '../config.js';
+import { BASE_URL, SOCKET_URL, TEAM_MEMBER } from '../config.js';
 import axios from 'axios';
 import ChatSidebar from './ChatSidebar';
 import io from 'socket.io-client';
@@ -9,8 +9,6 @@ import ChatMessage from './ChatMessage';
 import VoteCard from './VoteCard';
 
 function getUserData(location, navigate) {
-  console.log(location.state);
-
   const teamData = location.state?.team;
   if (!teamData || Object.keys(teamData).length == 0) {
     console.log('Redirecting to... teams page');
@@ -24,7 +22,10 @@ function getUserData(location, navigate) {
   }
 
   const sprintData = location.state?.sprintData;
-  if (!sprintData || Object.keys(sprintData).length == 0) {
+  if (
+    !sprintData ||
+    (Object.keys(sprintData).length == 0 && userData.role === 'team-manager')
+  ) {
     console.log('Redirecting to... teams page');
     navigate('/teams');
   }
@@ -36,8 +37,9 @@ export function Chats() {
   const location = useLocation();
   const navigate = useNavigate();
   const [manager, setManager] = useState(null);
+  const [sprintData, setSpriteData] = useState(null);
 
-  const { team, user, sprintData } = getUserData(location, navigate);
+  const { team, user, sprintData: sprint } = getUserData(location, navigate);
 
   const connect = function () {
     window.socket = io(SOCKET_URL);
@@ -52,6 +54,7 @@ export function Chats() {
       name: user.name,
       role: user.role,
       userId: user.userId,
+      sprintData: user.role === 'team-manager' ? sprint : null,
     });
 
     socket.on('userStatus', function (data) {
@@ -66,9 +69,25 @@ export function Chats() {
       console.log('User status received: 🧑‍🚀');
       console.table(data);
     });
+
+    socket.on('getSprintData', function (data) {
+      if (user.role === 'team-member') {
+        if (!data) {
+          console.log('Redirecting to... teams page');
+          navigate('/teams');
+          return;
+        }
+
+        setSpriteData(data);
+      }
+    });
   };
 
   useEffect(() => {
+    if (user.role === 'team-manager') {
+      setSpriteData(sprint);
+    }
+
     const URL = `${BASE_URL}/user/team-manager/${team['_id']}`;
 
     axios
@@ -104,30 +123,31 @@ export function Chats() {
 
   return (
     <>
-      <ChatHeader
-        teamName={team.teamName}
-        companyName={team.companyName}
-        manager={manager}
-        sprintData={sprintData}
-      ></ChatHeader>
+      {sprintData && (
+        <ChatHeader
+          teamName={team.teamName}
+          companyName={team.companyName}
+          manager={manager}
+          sprintData={sprintData}
+        ></ChatHeader>
+      )}
 
       <div className="chat-container">
         <ChatSidebar members={team.members}></ChatSidebar>
 
         <main>
-          <ChatMessage
-            title="#3657: Support files in pulse"
-            description="Implement support files in VFX/DI Pulls pages"
-          ></ChatMessage>
+          <ChatMessage />
 
-          <div className="vote-cards">
-            <VoteCard value={1} handleVote={handleVote} />
-            <VoteCard value={2} handleVote={handleVote} />
-            <VoteCard value={3} handleVote={handleVote} />
-            <VoteCard value={5} handleVote={handleVote} />
-            <VoteCard value={8} handleVote={handleVote} />
-            <VoteCard value="No Idea" handleVote={handleVote} />
-          </div>
+          {user.role === TEAM_MEMBER && (
+            <div className="vote-cards">
+              <VoteCard value={1} handleVote={handleVote} />
+              <VoteCard value={2} handleVote={handleVote} />
+              <VoteCard value={3} handleVote={handleVote} />
+              <VoteCard value={5} handleVote={handleVote} />
+              <VoteCard value={8} handleVote={handleVote} />
+              <VoteCard value="No Idea" handleVote={handleVote} />
+            </div>
+          )}
         </main>
       </div>
     </>

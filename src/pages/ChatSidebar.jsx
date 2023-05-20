@@ -1,8 +1,5 @@
 import React from 'react';
 
-// https://xsgames.co/randomusers/avatar.php?g=male
-// https://xsgames.co/randomusers/avatar.php?g=female
-
 export default function ChatSidebar({ members }) {
   return (
     <div className="chat-sidebar">
@@ -12,7 +9,7 @@ export default function ChatSidebar({ members }) {
         {members.map((member) => (
           <li key={member.email}>
             <img
-              src="https://xsgames.co/randomusers/avatar.php?g=male"
+              src={member.avatarUrl}
               className="avatar"
             />
             <span className="name"> {member.name} </span>
