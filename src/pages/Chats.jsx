@@ -38,11 +38,13 @@ export function Chats() {
   const navigate = useNavigate();
   const [manager, setManager] = useState(null);
   const [sprintData, setSpriteData] = useState(null);
+  const [SOCKET, setSocket] = useState(null);
 
   const { team, user, sprintData: sprint } = getUserData(location, navigate);
 
   const connect = function () {
     window.socket = io(SOCKET_URL);
+    setSocket(socket);
 
     socket.on('connect', () => {
       console.log('You are connected... 🧑‍🚀');
@@ -80,6 +82,10 @@ export function Chats() {
 
         setSpriteData(data);
       }
+    });
+
+    socket.on('getVote', (data) => {
+      console.log('Vote received', data.username, data.vote);
     });
   };
 
@@ -136,7 +142,7 @@ export function Chats() {
         <ChatSidebar members={team.members}></ChatSidebar>
 
         <main>
-          <ChatMessage />
+          <ChatMessage room={team.teamName} role={user.role} socket={SOCKET} />
 
           {user.role === TEAM_MEMBER && (
             <div className="vote-cards">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Modal,
   Button,
@@ -9,16 +9,17 @@ import {
 } from 'react-bootstrap';
 
 import { FcReading } from 'react-icons/fc';
+import { TEAM_MANAGER, TEAM_MEMBER } from '../config.js';
 
 // SPRINT MODAL FORM
-const ModalForm = function ({ setShowModal, showModal, setSprintData }) {
+const ModalForm = function ({ setShowModal, showModal, setSprintData, room }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [show, setShow] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setSprintData({ title, description });
+    setSprintData({ title, description, room });
     setShow(true);
     setShowModal(false);
   };
@@ -96,33 +97,65 @@ const ModalForm = function ({ setShowModal, showModal, setSprintData }) {
   );
 };
 
-export default function ChatMessage() {
+export default function ChatMessage({ room, role, socket }) {
   const [showModal, setShowModal] = useState(false);
   const [sprintData, setSprintData] = useState({
     title: 'Your title will appear here',
-    description: 'You can add your own title & description here 👉',
+    description: 'You will see description here',
+    room: room,
   });
+
+  const handleSprintData = (data) => {
+    setSprintData({ ...data });
+  };
+
+  useEffect(() => {
+    if (socket && role === TEAM_MANAGER) {
+      console.log('Manager add sprint data');
+      socket.emit('ticketData', sprintData);
+    }
+  }, [sprintData]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('getTicketData', handleSprintData);
+    }
+
+    // cleanup function
+    return () => {
+      if (socket) {
+        socket.off('getTicketData', handleSprintData);
+      }
+    };
+  }, [socket]);
 
   return (
     <>
-      {showModal ? (
-        <ModalForm
-          setShowModal={setShowModal}
-          showModal={showModal}
-          setSprintData={setSprintData}
-        />
-      ) : null}
-
       <div className="chat-message">
         <div className="message">
           <h3> {sprintData.title} </h3>
 
           <p> {sprintData.description} </p>
         </div>
-        <button className="btn btn-warning" onClick={() => setShowModal(true)}>
-          Add
-        </button>
+
+        {role === TEAM_MANAGER && (
+          <button
+            className="btn btn-warning"
+            onClick={() => setShowModal(true)}
+          >
+            Add
+          </button>
+        )}
       </div>
+
+      {showModal && (
+        <ModalForm
+          setShowModal={setShowModal}
+          showModal={showModal}
+          setSprintData={setSprintData}
+          room={room}
+        />
+      )}
     </>
   );
 }
