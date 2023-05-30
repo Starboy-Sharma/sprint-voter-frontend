@@ -3,7 +3,7 @@ import { BsBuilding } from 'react-icons/bs';
 import { AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BASE_URL } from '../config';
+import { BASE_URL, TEAM_MANAGER } from '../config';
 
 import CustomModal from './CustomModal';
 import AddMember from './AddMember';
@@ -39,7 +39,7 @@ const TeamCard = ({ team, user }) => {
     console.log('handleAddMembersModalSubmit called');
     event.preventDefault();
     console.log(selectedUserIds);
-    console.log(team["_id"]);
+    console.log(team['_id']);
 
     if (selectedUserIds.length === 0) {
       console.info('No users selected');
@@ -48,7 +48,7 @@ const TeamCard = ({ team, user }) => {
     }
 
     // Make an API Call and reload the page
-    const API_URL = `${BASE_URL}/member/`
+    const API_URL = `${BASE_URL}/member/`;
 
     axios
       .post(
@@ -150,18 +150,20 @@ const TeamCard = ({ team, user }) => {
           START PLANNING
         </Link>
 
-        <button
-          className="btn btn-secondary mt-2 w-100 btn-sm d-flex justify-content-center"
-          onClick={() => {
-            setAddMemberModal(true);
-          }}
-        >
-          <AiOutlineUsergroupAdd
-            fontSize={18}
-            style={{ marginRight: '0.5rem' }}
-          />
-          ADD MEMBERS
-        </button>
+        {user.role === TEAM_MANAGER && (
+          <button
+            className="btn btn-secondary mt-2 w-100 btn-sm d-flex justify-content-center"
+            onClick={() => {
+              setAddMemberModal(true);
+            }}
+          >
+            <AiOutlineUsergroupAdd
+              fontSize={18}
+              style={{ marginRight: '0.5rem' }}
+            />
+            ADD MEMBERS
+          </button>
+        )}
       </div>
     </div>
   );
