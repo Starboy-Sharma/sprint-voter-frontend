@@ -1,12 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import ChatHeader from './ChatHeader';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BASE_URL, SOCKET_URL, TEAM_MEMBER } from '../config.js';
+import { BASE_URL, SOCKET_URL, TEAM_MANAGER, TEAM_MEMBER } from '../config.js';
 import axios from 'axios';
 import ChatSidebar from './ChatSidebar';
 import io from 'socket.io-client';
 import ChatMessage from './ChatMessage';
 import VoteCard from './VoteCard';
+
+const initVoteCard = {
+  1: { count: 0, isVoteApproved: false },
+  2: { count: 0, isVoteApproved: false },
+  3: { count: 0, isVoteApproved: false },
+  5: { count: 0, isVoteApproved: false },
+  8: { count: 0, isVoteApproved: false },
+  'No Idea': { count: 0, isVoteApproved: false },
+};
 
 function getUserData(location, navigate) {
   const teamData = location.state?.team;
@@ -33,12 +42,36 @@ function getUserData(location, navigate) {
   return { team: teamData, user: userData, sprintData: sprintData };
 }
 
+function reducer(state, action) {
+  switch (action.type) {
+    case 'inc_vote':
+      return {
+        ...state,
+        [action.key]: {
+          count: state[action.key].count + 1,
+          isVoteApproved: false,
+        },
+      };
+
+    case 'reset_vote':
+      return {
+        ...initVoteCard,
+      };
+
+    default:
+      console.warn('Invalid action');
+      break;
+  }
+}
+
 export function Chats() {
   const location = useLocation();
   const navigate = useNavigate();
   const [manager, setManager] = useState(null);
   const [sprintData, setSpriteData] = useState(null);
   const [SOCKET, setSocket] = useState(null);
+  const [votes, dispatchVote] = useReducer(reducer, initVoteCard);
+  const [disableVote, setDisableVote] = useState(false);
 
   const { team, user, sprintData: sprint } = getUserData(location, navigate);
 
@@ -86,6 +119,13 @@ export function Chats() {
 
     socket.on('getVote', (data) => {
       console.log('Vote received', data.username, data.vote);
+
+      dispatchVote({ type: 'inc_vote', key: data.vote });
+    });
+
+    socket.on('reset_vote', () => {
+      dispatchVote({ type: 'reset_vote' });
+      setDisableVote(false);
     });
   };
 
@@ -113,7 +153,14 @@ export function Chats() {
   }, []);
 
   const handleVote = function (vote) {
-    console.log('Vote received', vote, user);
+    if (user.role === TEAM_MANAGER) {
+      return;
+    }
+
+    if (disableVote === true) {
+      console.log('Already vote applied');
+      return;
+    }
 
     const voteData = {
       room: team['teamName'],
@@ -123,6 +170,8 @@ export function Chats() {
       userId: user.userId,
       vote: vote,
     };
+
+    setDisableVote(true);
 
     socket.emit('addVote', voteData);
   };
@@ -144,16 +193,17 @@ export function Chats() {
         <main>
           <ChatMessage room={team.teamName} role={user.role} socket={SOCKET} />
 
-          {user.role === TEAM_MEMBER && (
-            <div className="vote-cards">
-              <VoteCard value={1} handleVote={handleVote} />
-              <VoteCard value={2} handleVote={handleVote} />
-              <VoteCard value={3} handleVote={handleVote} />
-              <VoteCard value={5} handleVote={handleVote} />
-              <VoteCard value={8} handleVote={handleVote} />
-              <VoteCard value="No Idea" handleVote={handleVote} />
-            </div>
-          )}
+          <div className="vote-cards">
+            {Object.keys(votes).map((key) => (
+              <VoteCard
+                value={key}
+                count={votes[key].count}
+                isVoteApproved={votes[key].isVoteApproved}
+                handleVote={handleVote}
+                key={key + Date.now()}
+              />
+            ))}
+          </div>
         </main>
       </div>
     </>

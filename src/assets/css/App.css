@@ -292,10 +292,32 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
 }
 
 .vote-card:hover {
     box-shadow: 1px 1px 5px #fff;
+}
+
+.vote-card.approved {
+    border: 3px solid var(--green-color);
+    box-shadow: 3px 1px 5px var(--green-color);
+}
+
+.vote-card .count {
+    position: absolute;
+    top: -13px;
+    right: -7px;
+    font-size: 13px;
+    color: white;
+    background: black;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
 }
 
 
