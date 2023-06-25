@@ -113,6 +113,7 @@ export default function ChatMessage({ room, role, socket }) {
     if (socket && role === TEAM_MANAGER) {
       console.log('Manager add sprint data');
       socket.emit('ticketData', sprintData);
+      socket.emit('reset_vote', room);
     }
   }, [sprintData]);
 
